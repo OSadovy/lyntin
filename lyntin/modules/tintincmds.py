@@ -559,8 +559,7 @@ commands_dict["showme"] = (showme_cmd, "input=", "limitparsing=0")
 
 def wshowme_cmd(ses, args, input):
   """
-  Writes the text into the named window, if the current ui supports named window
-s.
+  Writes the text into the named window, if the current ui supports named windows.
   If named windows are unsupported, writes the text into the main window.
 
   examples:
