@@ -141,6 +141,18 @@ class Engine:
     # the system.
     self._event_queue = Queue.Queue()
 
+    # counts the total number of events processed--for diagnostics
+    self._num_events_processed = 0
+
+    # holds all the sessions
+    self._sessions = {}
+
+    # the current session.  points to a Session object.
+    self._current_session = None
+
+    # map of hook name -> utils.PriorityQueue objects
+    self._hooks = {}
+
     # this is a lock for writing stuff to the ui--makes sure
     # we're not hosing things by having multiple things write
     # to the ui simultaneously....  ick.
@@ -183,18 +195,6 @@ class Engine:
 
     # list of registered threads
     self._threads = []
-
-    # counts the total number of events processed--for diagnostics
-    self._num_events_processed = 0
-
-    # holds all the sessions
-    self._sessions = {}
-
-    # the current session.  points to a Session object.
-    self._current_session = None
-
-    # map of hook name -> utils.PriorityQueue objects
-    self._hooks = {}
 
     # we register ourselves with the shutdown hook
     self.hookRegister("shutdown_hook", self.shutdown)
