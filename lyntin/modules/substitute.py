@@ -303,7 +303,7 @@ class SubstituteManager(manager.Manager):
     quiet = args["quiet"]
 
     data = self.getInfo(ses) + self.getAntiSubstitutesInfo(ses)
-    if not quiet:
+    if quiet:
       data = [m + " quiet={true}" for m in data]
 
     return data
