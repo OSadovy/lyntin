@@ -130,7 +130,7 @@ class BaseUI:
     @returns: 1 if we should show text, 0 if not
     @rtype: boolean
     """
-    if ses == None or getattr(ses, "_snoop", None) == None \
+    if ses == None or getattr(ses, "_snoop", None) != None \
         or exported.get_current_session() == ses \
         or exported.get_config("snoop", ses, 1) == 1:
       return 1
