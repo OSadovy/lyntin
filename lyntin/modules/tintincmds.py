@@ -509,6 +509,10 @@ def session_cmd(ses, args, input):
 
     e.changeSession(name)
 
+    # populate the session using the specified file
+    if filename:
+      read_cmd(ses, args, '')
+
     # connect to the mud...
     # this might take a while--we block here until this is done.
     sock.connect(host, port, name)
@@ -526,10 +530,6 @@ def session_cmd(ses, args, input):
 
       try:    e.closeSession(name)
       except: pass
-
-  # populate the session using the specified file
-  if filename:
-    read_cmd(ses, args, '')
 
 commands_dict["session"] = (session_cmd, "sessionname= host= port:int=-1 filename=")
 
