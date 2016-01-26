@@ -239,7 +239,7 @@ class SocketCommunicator:
     self._prompt_regex = self._buildPromptRegex()
 
     # this is the regex that we use to split the incoming text.
-    delimiters = ( IAC+GA, IAC+TELOPT_EOR, "\n" )
+    delimiters = ( "(?<!"+IAC+")"+IAC+GA, "(?<!"+IAC+")"+IAC+TELOPT_EOR, "\n" )
     # make a regexp matching any of the delimiters above
     self._line_regex = re.compile("(" + "|".join(delimiters) + ")",
                                   re.MULTILINE | re.DOTALL)
