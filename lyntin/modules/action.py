@@ -263,8 +263,16 @@ class ActionData:
       actup = self._actions[mem]
       
       if not tag or actup[6] == tag:
-        data.append("action {%s} {%s} color={%d} priority={%d} onetime={%s} tag={%s}" % 
-                (utils.escape(mem), utils.escape(actup[2]), actup[3], actup[4], actup[5], actup[6]))
+        a = ["action {%s} {%s}" % (utils.escape(mem), utils.escape(actup[2]))]
+        if actup[3]:
+          a.append("color={%t}" % actup[3])
+        if not actup[4] == 5:
+          a.append("priority={%d}" % actup[4])
+        if actup[5]:
+          a.append("onetime={%s}" % actup[5])
+        if not actup[6] == '':
+          a.append("tag={%s}" % actup[6])
+        data.append(" ".join(a))
 
     return data
 
