@@ -31,8 +31,9 @@ their moduledir and specify the moduledir at the command line using the
 -m flag.
 """
 
-import glob, os, sys
+import glob, os, pkgutil, sys
 from lyntin import exported, config
+import lyntin.modules
 
 
 def test_for_conflicts(name, module):
@@ -79,13 +80,9 @@ def load_modules():
   package.  This is truly a semi-magic function.
   """
   # handle modules.*
-  index = __file__.rfind(os.sep)
-  if index == -1:
-    path = "." + os.sep
-  else:
-    path = __file__[:index]
-
-  _module_list = glob.glob( os.path.join(path, "*.py"))
+  _module_list = []
+  for loader, name, isPkg in pkgutil.iter_modules(lyntin.modules.__path__):
+    _module_list.append(name)
   _module_list.sort()
 
   for mem in _module_list:
