@@ -106,6 +106,7 @@ class ActionData:
       compiled = utils.compile_regexp(expansion, 1)
 
       self._actions[trigger] = (trigger, compiled, response, color, priority, onetime, tag)
+    self._actionlist = None       # invalidating action list
 
   def clear(self):
     """
