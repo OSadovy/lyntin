@@ -419,7 +419,7 @@ class ActionManager(manager.Manager):
     comes from the mud.
     """
     ses = args["session"]
-    text = args["dataadj"]
+    text = args.get("dataadj") or args.get("prompt") or ''
 
     if exported.get_config("ignoreactions", ses, 0) == 0:
       if self._actions.has_key(ses):
@@ -610,6 +610,7 @@ def load():
   exported.add_manager("action", am)
 
   exported.hook_register("mud_filter_hook", am.mudfilter, 75)
+  exported.hook_register("prompt_hook", am.mudfilter, 75)
   exported.hook_register("write_hook", am.persist)
   exported.hook_register("variable_change_hook", am.variableChange)
 
@@ -627,6 +628,7 @@ def unload():
   exported.remove_manager("alias")
 
   exported.hook_unregister("mud_filter_hook", am.mudfilter)
+  exported.hook_unregister("prompt_hook", am.mudfilter)
   exported.hook_unregister("write_hook", am.persist)
   exported.hook_unregister("variable_change_hook", am.variableChange)
 
