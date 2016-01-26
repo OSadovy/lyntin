@@ -224,6 +224,7 @@ class ConfigManager(manager.Manager):
     # this is a map of session -> (map of config names -> items)
     self._config = {}
     self._engine = e
+    e.hookRegister("write_hook", self.persist)
 
   def add(self, name, configitem, ses=None):
     """
@@ -389,3 +390,19 @@ class ConfigManager(manager.Manager):
     if self._config.has_key(ses):
       del self._config[ses]
 
+  def persist(self, args):
+    """
+    write_hook function for persisting the state of our session.
+    """
+    ses = args["session"]
+    quiet = args["quiet"]
+    cfg = self._config.get(ses)
+    if cfg is None:
+      return []
+    data = []
+    quiet_str = " quiet={true}" if quiet else ""
+    for name in sorted(cfg.keys()):
+      i = cfg[name]
+      if i._persist:
+        data.append("config {%s} {%s}%s" % (name, i.get(), quiet_str))
+    return data
