@@ -111,6 +111,50 @@ def unsomething_helper(args, func, ses=None, sing="", plur=""):
     exported.write_message(data, ses)
 
 
+class CommandRegistry(object):
+  """Helper which provides decorator to nicely register lyntin commands.
+  Usage:
+  from lyntin.modules.modutils import CommandRegistry
+  
+  registry = CommandRegistry()
+  
+  @registry.command("test")
+  def test_cmd(ses, args, input):
+    # ...
+  
+  def load():
+    registry.register()
+
+  def unload():
+    registry.unregister()
+  """
+  def __init__(self):
+    self.commands_dict = {}
+    self.instance_methods_commands_dict = {}
+
+  def command(self, cmd, arguments=None, argoptions=None, helptext=""):
+    def wrap(func):
+      self.commands_dict[cmd] = (func, arguments, argoptions, helptext)
+      return func
+    return wrap
+
+  def command_method(self, cmd, arguments=None, argoptions=None, helptext=""):
+    def wrap(func):
+      self.instance_methods_commands_dict[cmd] = (func, arguments, argoptions, helptext)
+      return func
+    return wrap
+
+  def register(self, instance=None):
+    if instance is not None:
+      for cmd, (func, arguments, argoptions, helptext) in self.instance_methods_commands_dict.iteritems():
+        f = types.MethodType(func, instance)
+        self.commands_dict[cmd] = (f, arguments, argoptions, helptext)
+    load_commands(self.commands_dict)
+    
+  def unregister(self):
+    unload_commands(self.commands_dict)
+
+
 # Local variables:
 # mode:python
 # py-indent-offset:2
