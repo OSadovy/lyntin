@@ -40,13 +40,14 @@ Aliases are currently handled via string finding and not regular
 expressions.  At some point in the future, this will be changed to
 regular expressions to better handle a wider variety of aliases.
 """
+from collections import OrderedDict
 from lyntin import manager, utils, exported
 from lyntin.modules import modutils
 
 class AliasData:
   """ Manages aliases."""
   def __init__(self):
-    self._aliases = {}
+    self._aliases = OrderedDict()
 
   def addAlias(self, name, expansion):
     """

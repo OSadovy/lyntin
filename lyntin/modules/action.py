@@ -41,6 +41,7 @@ The compiled regular expressions gets recompiled every time a variable
 changes--this allows us to handle Lyntin variables in the action trigger
 statements.
 """
+from collections import OrderedDict
 import re
 from lyntin import manager, utils, event, exported, ansi
 from lyntin.modules import modutils
@@ -51,7 +52,7 @@ VARREGEXP = re.compile('%_?(\d+)')
 
 class ActionData:
   def __init__(self, ses):
-    self._actions = {}
+    self._actions = OrderedDict()
     self._ses = ses
     self._disabled = {}
     self._actionlist = None
