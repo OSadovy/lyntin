@@ -163,7 +163,8 @@ def config_cmd(ses, args, input):
       c.change(name, value, ses)
     except:
       c.change(name, value)
-    exported.write_message("config: %s set to %s." % (name, value), ses)
+      if not quiet:
+        exported.write_message("config: %s set to %s." % (name, value), ses)
   except Exception, e:
     exported.write_error(e)
 
