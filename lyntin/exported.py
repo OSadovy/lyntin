@@ -492,7 +492,7 @@ def write_message(text, ses=None, **hints):
   @param ses: the session instance the error data is associated with
   @type  ses: session.Session
   """
-  text = str(text)
+  #text = str(text)
   if myengine:
     myengine.writeUI(message.Message(text + "\n", message.LTDATA, ses, **hints))
   else:
@@ -509,7 +509,7 @@ def write_error(text, ses=None):
   @param ses: the session instance the error data is associated with
   @type  ses: session.Session
   """
-  text = str(text)
+  #text = str(text)
   if myengine:
     myengine.writeUI(message.Message(text + "\n", message.ERROR, ses))
   else:
