@@ -1019,7 +1019,8 @@ def main(defaultoptions={}):
       ShutdownEvent.  This should probably get fixed up at some point
       in the future.
       """
-      sys.stderr.write("goodbye.\n")
+      if not hasattr(sys, 'frozen'):
+        sys.stderr.write("goodbye.\n")
       #exported.hook_spam("shutdown_hook", {})
     import atexit
     atexit.register(on_shutdown)
@@ -1085,7 +1086,8 @@ def main(defaultoptions={}):
     try:
       Engine.instance._ui.runui()
     finally:
-      sys.stderr.write("Shutting down...")
+      if not hasattr(sys, 'frozen'):
+        sys.stderr.write("Shutting down...")
       event.ShutdownEvent().enqueue()
       engine_thread.join(10)
       timer_thread.join(10)
