@@ -58,7 +58,7 @@ class LoggerData:
         input = ansi.filter_ansi(input)
 
       text = utils.filter_cm(input)
-      text = text.replace("\n", os.linesep)
+      #text = text.replace("\n", os.linesep)
       self._logfile.write(text)
       self._logfile.flush()
     except:
