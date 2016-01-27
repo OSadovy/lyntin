@@ -23,7 +23,7 @@ Holds constants which will get used through the code-base as well as in
 various Lyntin modules.  We attempt to keep all the useful stuff in three
 different modules: constants, exported, and utils.
 """
-import __init__
+from . import __version__, __url__
 
 FIRST = 1
 LAST = 99
@@ -35,9 +35,9 @@ FALSE_VALUES = ["no", "false", "0", "off", 0]
 LYNTINTITLE = "Lyntin -- The Hacker's Mudclient "
 
 # version information
-VERSION = """Lyntin """ + __init__.__version__ + """
+VERSION = """Lyntin """ + __version__ + """
 For bugs, suggestions, mailing list info, feature requests,
-architecture docs, et al, see """ + __init__.__url__ + """
+architecture docs, et al, see """ + __url__ + """
 """
 
 # help text which gets printed to stdout if you do 'lyntin.py --help'

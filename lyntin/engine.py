@@ -1058,8 +1058,8 @@ def main(defaultoptions={}):
     exported.write_message("Loading Lyntin modules.")
   
     try:
-      import modules.__init__
-      modules.__init__.load_modules()
+      import lyntin.modules
+      lyntin.modules.load_modules()
     except:
       exported.write_traceback("Modules did not load correctly.")
       sys.exit(1)

@@ -30,6 +30,11 @@ to use here.  Otherwise, users can put modules that they want to use in
 their moduledir and specify the moduledir at the command line using the
 -m flag.
 """
+try:
+    __import__('pkg_resources').declare_namespace(__name__)
+except ImportError:
+    from pkgutil import extend_path
+    __path__ = extend_path(__path__, __name__)
 
 import glob, os, pkgutil, sys
 from lyntin import exported, config
