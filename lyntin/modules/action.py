@@ -179,7 +179,7 @@ class ActionData:
     if not actionlist:
       actionlist = filter(lambda x: not self._disabled.has_key(x[6]),
                           self._actions.values())
-      actionlist.sort(lambda x,y:cmp(x[3], y[3]))
+      actionlist.sort(key=lambda i: i[3])
       self._actionlist = actionlist
 
     colorline = utils.filter_cm(text)
@@ -202,13 +202,11 @@ class ActionData:
         # event with ; separators is due to possible issues with 
         # braces and such in malformed responses.
 
-        # get variables from the action
-        actionvars = get_ordered_vars(action)
-
         # fill in values for all the variables in the match
         varvals = {}
-        for i in xrange(len(actionvars)):
-          varvals[actionvars[i]] = match.group(i+1)
+        if match.lastindex is not None:
+          for i in xrange(match.lastindex):
+            varvals[str(i+1)] = match.group(i+1)
 
         # add special variables
         varvals['a'] = line.replace(';', '_')
@@ -428,26 +426,6 @@ class ActionManager(manager.Manager):
 
     return text
 
-
-def get_ordered_vars(text):
-  """
-  Takes in a string and removes any ordered variables
-  from it.  Returns a list of the variables.
-
-  @param text: the incoming string which may have ordered variables in it.
-  @type  text: string
-
-  @return: list of strings of the form '%[0-9]+' for ordered variable
-      substitution.
-  @rtype: list of strings
-  """
-  keylist = []
-  matches = VARREGEXP.findall(text)
-
-  for match in matches:
-    keylist.append(match)
-
-  return keylist
 
 commands_dict = {}
 

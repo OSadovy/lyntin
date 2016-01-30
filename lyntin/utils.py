@@ -914,7 +914,7 @@ def expand_vars(text, varmap):
 
   varmapkeys = varmap.keys()
   # we want to sort them in order of longest first
-  varmapkeys.sort(lambda x,y: cmp(len(y), len(x)))
+  varmapkeys.sort(key=lambda x: len(x), reverse=True)
   i = 0
 
   # we go through the text expanding things one at a time.
