@@ -205,8 +205,14 @@ class ActionData:
         # fill in values for all the variables in the match
         varvals = {}
         if match.lastindex is not None:
-          for i in xrange(match.lastindex):
-            varvals[str(i+1)] = match.group(i+1)
+          if action.startswith('r['):
+            for i in xrange(match.lastindex):
+              varvals[str(i+1)] = match.group(i+1)
+          else:
+            # get variables from the action
+            actionvars = get_ordered_vars(action)
+            for i in xrange(len(actionvars)):
+              varvals[actionvars[i]] = match.group(i+1)
 
         # add special variables
         varvals['a'] = line.replace(';', '_')
@@ -426,6 +432,26 @@ class ActionManager(manager.Manager):
 
     return text
 
+
+def get_ordered_vars(text):
+  """
+  Takes in a string and removes any ordered variables
+  from it.  Returns a list of the variables.
+
+  @param text: the incoming string which may have ordered variables in it.
+  @type  text: string
+
+  @return: list of strings of the form '%[0-9]+' for ordered variable
+      substitution.
+  @rtype: list of strings
+  """
+  keylist = []
+  matches = VARREGEXP.findall(text)
+
+  for match in matches:
+    keylist.append(match)
+
+  return keylist
 
 commands_dict = {}
 
