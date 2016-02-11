@@ -166,7 +166,7 @@ def config_cmd(ses, args, input):
       if not quiet:
         exported.write_message("config: %s set to %s." % (name, value), ses)
   except Exception, e:
-    exported.write_error(e)
+    exported.write_error(str(e))
 
 commands_dict["config"] = (config_cmd, "name= value= quiet:boolean=false")
   
