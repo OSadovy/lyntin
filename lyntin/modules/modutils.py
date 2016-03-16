@@ -26,7 +26,7 @@ need to change them.  Having said that, I will note it doesn't change
 much.
 """
 import types
-from lyntin import exported
+from lyntin import constants, exported
 
 
 def load_commands(commands_dict):
@@ -112,7 +112,7 @@ def unsomething_helper(args, func, ses=None, sing="", plur=""):
 
 
 class CommandRegistry(object):
-  """Helper which provides decorator to nicely register lyntin commands.
+  """Helper which provides decorator to nicely register lyntin commands and hooks.
   Usage:
   from lyntin.modules.modutils import CommandRegistry
   
@@ -122,6 +122,10 @@ class CommandRegistry(object):
   def test_cmd(ses, args, input):
     # ...
   
+  @registry.hook("something_parsed", 50)
+  def hook(args):
+    ...
+
   def load():
     registry.register()
 
@@ -131,6 +135,8 @@ class CommandRegistry(object):
   def __init__(self):
     self.commands_dict = {}
     self.instance_methods_commands_dict = {}
+    self.hooks = []
+    self.instance_hooks = []
 
   def command(self, cmd, arguments=None, argoptions=None, helptext=""):
     def wrap(func):
@@ -144,15 +150,34 @@ class CommandRegistry(object):
       return func
     return wrap
 
+  def hook(self, hook_name, priority=constants.LAST):
+    def wrap(func):
+      self.hooks.append((hook_name, func, priority))
+      return func
+    return wrap
+
+  def hook_method(self, hook_name, priority=constants.LAST):
+    def wrap(func):
+      self.instance_hooks.append((hook_name, func, priority))
+      return func
+    return wrap
+
   def register(self, instance=None):
     if instance is not None:
       for cmd, (func, arguments, argoptions, helptext) in self.instance_methods_commands_dict.iteritems():
         f = types.MethodType(func, instance)
         self.commands_dict[cmd] = (f, arguments, argoptions, helptext)
+      for hook_name, func, priority in self.instance_hooks:
+        f = types.MethodType(func, instance)
+        self.hooks.append((hook_name, f, priority))
     load_commands(self.commands_dict)
-    
+    for hook_name, func, priority in self.hooks:
+      exported.hook_register(hook_name, func, priority)
+
   def unregister(self):
     unload_commands(self.commands_dict)
+    for hook_name, func, _ in self.hooks:
+      exported.hook_unregister(hook_name, func)
 
 
 # Local variables:
