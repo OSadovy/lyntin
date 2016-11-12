@@ -1064,9 +1064,6 @@ def main(defaultoptions={}):
       exported.write_traceback("Modules did not load correctly.")
       sys.exit(1)
   
-    # spam the startup hook 
-    exported.hook_spam("startup_hook", {})
-  
     commandchar = Engine.instance._managers["config"].get("commandchar")
 
     # handle command files
@@ -1076,6 +1073,9 @@ def main(defaultoptions={}):
       # meaning in the argparser
       mem = mem.replace("\\", "\\\\")
       exported.lyntin_command("%sread %s" % (commandchar, mem), internal=1)
+  
+    # spam the startup hook 
+    exported.hook_spam("startup_hook", {})
   
     # we're done initialization!
     exported.write_message(constants.STARTUPTEXT)
