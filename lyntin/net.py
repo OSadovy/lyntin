@@ -243,6 +243,7 @@ class SocketCommunicator:
     # make a regexp matching any of the delimiters above
     self._line_regex = re.compile("(" + "|".join(delimiters) + ")",
                                   re.MULTILINE | re.DOTALL)
+    self._iac_se_regex = re.compile("(?<!"+IAC+")"+IAC+SE)
 
     # "The server can do delimited prompts" flag
     self._good_prompts = 0
@@ -587,10 +588,11 @@ class SocketCommunicator:
         # handles SB...SE stuff
         elif data[i+1] == SB:
 
-          end = data.find(SE, i)
-          if end == -1:
+          end_match = self._iac_se_regex.search(data[i:])
+          if end_match is None:
             marker = i
             break
+          end = i + end_match.start() + 1
 
           option = data[i:end+1]
           self.logControl("receive: " + _cc(option))
