@@ -563,7 +563,7 @@ def wrap_text(textlist, wraplength=50, indent=0, firstline=0):
     wraplength = wraplength - 2
 
   # split the formatting from the text
-  if type(textlist) == types.StringType:
+  if isinstance(textlist, basestring):
     textlist = ansi.split_ansi_from_text(textlist)
 
   for i in range(0, len(textlist)):
