@@ -51,7 +51,6 @@ to download the .tar.gz file, or you can use easy_install::
       keywords="mud client",
       url=URL,
       packages=find_packages(exclude=["ez_setup"]),
-      namespace_packages=['lyntin', 'lyntin.ui', 'lyntin.modules'],
       scripts=SCRIPTS,
       include_package_data = False,
       install_requires = [], # FIXME
