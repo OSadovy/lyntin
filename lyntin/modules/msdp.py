@@ -187,7 +187,7 @@ def handle_telnet_option(args):
                     break
                 requested_vars= args["requested_vars"]
                 if requested_vars:
-                    session._socket.write(encode_msdp([MSDPVar("REPORT", v) for v in requested_vars]), 0)
+                    session._socket.write(''.join(encode_msdp([MSDPVar("REPORT", v)]) for v in requested_vars), 0)
         exported.hook_spam("msdp_data", {'session': session, 'vars': vars})
     raise exported.StopSpammingException
 
