@@ -41,7 +41,7 @@ The compiled regular expressions gets recompiled every time a variable
 changes--this allows us to handle Lyntin variables in the action trigger
 statements.
 """
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
 import re
 from lyntin import manager, utils, event, exported, ansi
 from lyntin.modules import modutils
@@ -49,6 +49,8 @@ from lyntin.modules import modutils
 
 # the placement variable regular expression
 VARREGEXP = re.compile('%_?(\d+)')
+# Represents an item in action cache
+ActionItem = namedtuple('ActionItem', 'trigger compiled response color priority onetime tag usesvars')
 
 class ActionData:
   def __init__(self, ses):
@@ -89,7 +91,7 @@ class ActionData:
     if not expansion:
       expansion = trigger
     compiled = utils.compile_regexp(expansion, 1)
-    self._actions[trigger] = (trigger, compiled, response, color, priority, onetime, tag)
+    self._actions[trigger] = ActionItem(trigger, compiled, response, color, priority, onetime, tag, '$' in trigger)
     self._actionlist = None       # invalidating action list
     return 1
 
@@ -98,15 +100,16 @@ class ActionData:
     When a variable changes, we go through and recompile all the
     regular expressions for the actions in this session.
     """
-    for mem in self._actions.keys():
-      (trigger, compiled, response, color, priority, onetime, tag) = self._actions[mem]
+    for (trigger, compiled, response, color, priority, onetime, tag, usesvars) in self._actions.itervalues():
+      if not usesvars:
+        continue
       expansion = exported.expand_ses_vars(trigger, self._ses)
       if not expansion:
         expansion = trigger
 
       compiled = utils.compile_regexp(expansion, 1)
 
-      self._actions[trigger] = (trigger, compiled, response, color, priority, onetime, tag)
+      self._actions[trigger] = ActionItem(trigger, compiled, response, color, priority, onetime, tag, '$' in trigger)
     self._actionlist = None       # invalidating action list
 
   def clear(self):
@@ -119,7 +122,7 @@ class ActionData:
 
   def getInfoMappings(self):
     l = []
-    for key in self._actions.keys():
+    for key in self._actions:
       mem = self._actions[key]
       l.append( { "trigger": mem[0],
                   "action": mem[2],
@@ -156,7 +159,7 @@ class ActionData:
 
     ret = []
     for mem in keys:
-      (trigger, compiled, response, color, priority, onetime, tag) = actions[mem]
+      (trigger, compiled, response, color, priority, onetime, tag, usesvars) = actions[mem]
       if not mytag or mytag == tag:
         ret.append((trigger, response, tag))
         del actions[mem]
@@ -176,9 +179,8 @@ class ActionData:
     # FIXME - make sure this works even when lines are broken up.
 
     actionlist = self._actionlist
-    if not actionlist:
-      actionlist = filter(lambda x: not self._disabled.has_key(x[6]),
-                          self._actions.values())
+    if actionlist is None:
+      actionlist = [x for x in self._actions.itervalues() if x.tag not in self._disabled]
       actionlist.sort(key=lambda i: i[3])
       self._actionlist = actionlist
 
@@ -187,7 +189,7 @@ class ActionData:
 
     # go through all the lines in the data and see if we have
     # any matches
-    for (action, actioncompiled, response, color, priority, onetime, tag) in actionlist:
+    for (action, actioncompiled, response, color, priority, onetime, tag, usesvars) in actionlist:
       if color:
         match = actioncompiled.search(colorline)
         line = colorline
@@ -227,7 +229,7 @@ class ActionData:
         except:
           exported.write_traceback()
 
-        if onetime and self._actions.has_key(action):
+        if onetime and action in self._actions:
           del self._actions[action]
           self._actionlist = None           # invalidate the list
 
@@ -380,7 +382,7 @@ class ActionManager(manager.Manager):
         ndata = self.getActionData(newsession)
 
         for (mem, act) in bdata._actions.items():
-          ndata.addAction(mem, *act[2:])
+          ndata.addAction(mem, *act[2:-1])
         for tag in bdata._disabled.keys():
           ndata.disable(tag)
 

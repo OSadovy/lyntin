@@ -124,10 +124,7 @@ class AliasData:
       firstword = input.split(' ', 1)[0]
 
       # if we match an alias, we return the expansion
-      if firstword in self._aliases.keys():
-        return self._aliases[firstword]            
-
-    return None
+      return self._aliases.get(firstword)
 
   def getStatus(self):
     """
