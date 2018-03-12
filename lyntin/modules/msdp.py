@@ -55,7 +55,7 @@ Currently, there is no specific interface tosend MSDP commands from the plugins,
 """
 
 from collections import namedtuple
-from lyntin import exported, net
+from lyntin import event, exported, net
 
 MSDP = chr(69)
 MSDP_VAR = chr(1)
@@ -188,7 +188,7 @@ def handle_telnet_option(args):
                 requested_vars= args["requested_vars"]
                 if requested_vars:
                     session._socket.write(''.join(encode_msdp([MSDPVar("REPORT", v)]) for v in requested_vars), 0)
-        exported.hook_spam("msdp_data", {'session': session, 'vars': vars})
+        event.SpamEvent("msdp_data", {'session': session, 'vars': vars}).enqueue()
     raise exported.StopSpammingException
 
 def load():
