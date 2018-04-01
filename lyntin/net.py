@@ -452,6 +452,7 @@ class SocketCommunicator:
     if convert:
       data = data.replace("\n", "\r\n")
 
+      data = data.encode(config.options['serverencoding'])
       if IAC in data:
         data = data.replace(IAC, IAC+IAC)
 
@@ -498,6 +499,7 @@ class SocketCommunicator:
     if IAC in data:
       data = self.handleNego(data)
 
+    data = data.decode(config.options['serverencoding'])
     if not self._config.get("promptdetection") or data.endswith("\n"):
       event.MudEvent(self._session, data).enqueue() 
     else:

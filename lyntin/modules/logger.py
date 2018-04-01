@@ -23,7 +23,7 @@ This module defines the LoggerManager which handles logging.
 
 Logging can be turned on and shut off on a session by session basis.
 """
-import string, os, thread
+import io, os, thread
 from lyntin import ansi, manager, config, utils, exported, constants
 from lyntin.modules import modutils
 
@@ -174,7 +174,7 @@ class LoggerData:
     """
       
     # FIXME - what happens if we already have a logfile open?
-    self.setLogFile(open(filename, "a"), stripansi, userprefix)
+    self.setLogFile(io.open(filename, "a"), stripansi, userprefix)
 
   def setLogFile(self, fileob, stripansi=1, userprefix=""):
     """
@@ -319,7 +319,7 @@ def log_cmd(ses, args, input):
       logfile = config.options["datadir"] + logfile
 
     if databuffer:
-      f = open(logfile, "w")
+      f = io.open(logfile, "w")
       buffer = "".join(ses.getDataBuffer())
       f.write(buffer)
       exported.write_message("log: dumped %d lines of databuffer to logfile" % buffer.count("\n"), ses)

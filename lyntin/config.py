@@ -53,7 +53,8 @@ options = {'datadir': '',
            'moduledir': [],
            'readfile': [],
            'snoopdefault': 1,
-           'ui': 'text'}
+           'ui': 'text',
+           'serverencoding': ''}
 
 class ConfigBase:
   """
@@ -318,7 +319,7 @@ class ConfigManager(manager.Manager):
       if ses == None:
         self._config[None] = {}
       else:
-        raise ValueError("Session '%s' does not exist." % repr(ses))
+        raise ValueError(u"Session '%s' does not exist." % ses.getName())
 
     if not self._config[ses].has_key(name):
       if defaultvalue == constants.NODEFAULTVALUE:

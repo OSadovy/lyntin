@@ -176,7 +176,7 @@ class Textui(base.BaseUI):
     use raw_input to grab user input.
     """
     try:
-      return raw_input()
+      return raw_input().decode(self._stdin.encoding)
     except EOFError:
       pass
 
@@ -189,12 +189,12 @@ class Textui(base.BaseUI):
     if readers:
       for mem in readers:
         try:
-          return mem.readline()
+          return mem.readline().decode(self._stdin.encoding)
         except IOError:
           pass
 
   def _non_posix_input(self):
-    return self._stdin.readline()
+    return self._stdin.readline().decode(self._stdin.encoding)
 
   def run(self):
     """ This is the poll loop for user input."""

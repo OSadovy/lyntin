@@ -279,7 +279,7 @@ class Session:
       exported.hook_spam("to_mud_hook", {"session": self, "data": line, "tag": tag})
 
     if self._socket:
-      retval = self._socket.write(str(message))
+      retval = self._socket.write(message)
       if retval:
         exported.write_error("socket write: %s" % retval)
 

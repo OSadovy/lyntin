@@ -1010,6 +1010,8 @@ def main(defaultoptions={}):
       if os.environ.has_key("HOME"):
         config.options["datadir"] = os.environ["HOME"]
     config.options["datadir"] = utils.fixdir(config.options["datadir"])
+    if not config.options['serverencoding']:
+      config.options['serverencoding'] = locale.getpreferredencoding()
 
     def on_shutdown():
       """

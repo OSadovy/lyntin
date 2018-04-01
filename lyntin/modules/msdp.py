@@ -55,7 +55,7 @@ Currently, there is no specific interface tosend MSDP commands from the plugins,
 """
 
 from collections import namedtuple
-from lyntin import event, exported, net
+from lyntin import config, event, exported, net
 
 MSDP = chr(69)
 MSDP_VAR = chr(1)
@@ -76,7 +76,7 @@ def encode_msdp(data, toplevel=True):
         result = [MSDP_TABLE_OPEN]
         for k, v in data.iteritems():
             result.append(MSDP_VAR)
-            result.append(str(k))
+            result.append(unicode(k).encode(config.options['serverencoding']))
             result.append(MSDP_VAL)
             result.append(encode_msdp(v, False))
         result.append(MSDP_TABLE_CLOSE)
@@ -91,9 +91,9 @@ def encode_msdp(data, toplevel=True):
             result.append(MSDP_VAL + encode_msdp(i, False))
         result.append(MSDP_ARRAY_CLOSE)
     elif isinstance(data, MSDPVar):
-        result.append(MSDP_VAR + data.name + MSDP_VAL + encode_msdp(data.value, False))
+        result.append(MSDP_VAR + data.name.encode(config.options['serverencoding']) + MSDP_VAL + encode_msdp(data.value, False))
     else:
-        result.append(str(data).replace(net.IAC, net.IAC * 2))
+        result.append(unicode(data).encode(config.options['serverencoding']).replace(net.IAC, net.IAC * 2))
     return ''.join(result)
 
 def _read_msdp_val(text, i):
@@ -117,7 +117,7 @@ def _read_msdp_val(text, i):
             else:
                 break
         i += 1
-    return text[start:i].replace(net.IAC * 2, net.IAC), i
+    return text[start:i].replace(net.IAC * 2, net.IAC).decode(config.options['serverencoding']), i
 
 def _read_msdp_table(text, i):
     result = {}
@@ -128,7 +128,7 @@ def _read_msdp_table(text, i):
         start_key = i
         while not text[i] == MSDP_VAL:
             i += 1
-        k = text[start_key:i]
+        k = text[start_key:i].decode(config.options['serverencoding'])
         v, i = _read_msdp_val(text, i + 1)
         result[k] = v
     return result, i

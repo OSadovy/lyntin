@@ -19,6 +19,7 @@
 # $Id: tintincmds.py,v 1.26 2007/07/24 00:39:03 willhelm Exp $
 #########################################################################
 
+import io
 import os, os.path
 from lyntin import net, utils, engine, constants, config, exported, event
 from lyntin.modules import modutils
@@ -394,7 +395,7 @@ def read_cmd(ses, args, input):
     if filename.startswith("http://"):
       contents = utils.http_get(filename).split("\n")
     else:
-      f = open(filename, "r")
+      f = io.open(filename, "r")
       contents = f.readlines()
       f.close()
   except Exception, e:
@@ -592,7 +593,7 @@ def textin_cmd(ses, args, input):
     filename = config.options["datadir"] + filename
    
   try:
-    f = open(filename, "r")
+    f = io.open(filename, "r")
     contents = f.readlines()
     f.close()
     for mem in contents:
@@ -651,7 +652,7 @@ def write_cmd(ses, args, input):
 
   if data:
     try:
-      f = open(filename, "w")
+      f = io.open(filename, "w")
       f.write(c + ("\n" + c).join(data))
       f.close()
       exported.write_message("write: file %s has been written for session %s." % 
