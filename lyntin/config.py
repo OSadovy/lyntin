@@ -163,7 +163,7 @@ class StringConfig(ConfigBase):
   Holds a string.
   """
   def check(self, value):
-    if type(value) != types.StringType:
+    if not isinstance(value, basestring):
       raise TypeError("Value is not of type string.")
     return value
 
