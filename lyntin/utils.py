@@ -951,7 +951,7 @@ def expand_vars(text, varmap):
           textfragment = text[j+1:closure]
 
           if textfragment in varmapkeys:
-            repl = str(varmap[textfragment])
+            repl = unicode(varmap[textfragment])
             text = text[:i] + repl + text[closure+1:]
             break
 
@@ -960,7 +960,7 @@ def expand_vars(text, varmap):
 
           for mem in varmapkeys:
             if textfragment.find(mem) == 0:
-              repl = str(varmap[mem])
+              repl = unicode(varmap[mem])
               text = text[:i] + repl + text[i+len(mem)+ccount:]
               break
       else:
